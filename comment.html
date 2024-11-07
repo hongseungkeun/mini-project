@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>comment-section</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="comment.css">
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, addDoc, getDocs, limit, where, deleteDoc} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA68UwWl-8vNQ4oLhSdkbralIICwxKfZx4",
+        authDomain: "sparta-dda13.firebaseapp.com",
+        projectId: "sparta-dda13",
+        storageBucket: "sparta-dda13.firebasestorage.app",
+        messagingSenderId: "1079229826438",
+        appId: "1:1079229826438:web:5d4954af8fea9b6d211807"
+    };
+
+    async function isNameDuplicate(name) {
+        const comments = await getDocs(collection(db, "comment"));
+        return comments.docs.some(doc => doc.data().name === name);
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    $("#sendBtn").click(async function () {
+        const name = $('#name').val();
+        const pw = $('#pw').val();
+        const comment = $('#comment').val();
+        const currentDate = new Date();
+        const date = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+        let num = 1;
+
+        try {
+        if (!name) {
+            alert("이름을 입력해주세요.");
+            return;
+        }
+
+        if (!comment) {
+            alert("글을 입력해주세요.");
+            return;
+        }
+
+        const latestCommentQuery = query(
+            collection(db, "comment"),
+            orderBy("num", "desc"),
+            limit(1)
+        );
+
+        const latestDoc = await getDocs(latestCommentQuery);
+
+        if (!latestDoc.empty) {
+            console.log(latestDoc.docs[0].data().num + 1);
+            num = latestDoc.docs[0].data().num + 1;
+        }
+
+        await addDoc(collection(db, "comment"), { name, pw, date, comment, num });
+        alert('등록 완료');
+        window.location.reload();
+    } catch (error) {
+        alert(error.message);
+    }
+    });
+
+    $(document).on("click", "#delete", function () {
+        const num = $(this).attr('class');
+        const inputPw = prompt("비밀번호를 입력해주세요:");
+
+        if (inputPw !== null || inputPw === "") {
+            deleteCommentByNum(num, inputPw);
+        }
+    });
+
+    async function deleteCommentByNum(num, inputPw) {
+        const q = query(collection(db, "comment"), where("num", "==", parseInt(num)));
+        const querySnapshot = await getDocs(q);
+        const docData = querySnapshot.docs[0];
+        const pw = docData.data().pw;
+
+        if (pw === inputPw) {
+            await deleteDoc(docData.ref);
+            alert("삭제가 완료되었습니다.");
+            window.location.reload();
+        } else {
+            alert("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    const docs = await getDocs(query(collection(db, "comment"), orderBy("num", "asc")));
+    docs.forEach((doc) => {
+        let row = doc.data();
+
+        let name = row['name'];
+        let date = row['date'];
+        let comment = row['comment'];
+        let num = row['num'];
+
+        let html = `
+            <li>
+                <div class="comment-section-box">
+                    <div class="comment-section-name">
+                        <p>${name}</p>
+                    </div>
+                    <div class="comment-section-text">
+                        <p>${comment}</p>
+                    </div>
+                    <div class="comment-section-time">
+                        <p>${date}</p>
+                        <input id="delete" class="${num}" type="button" value="삭제">
+                    </div>
+                </div>
+            </li>`
+        $('#comment-section-wrap').append(html);
+    });
+    </script>
+</head>
+<body>
+<div id="wrap">
+    <div id="header">
+        <div>
+            <div>
+                <p>방명록</p>
+            </div>
+        </div>
+    </div>
+    <section class="comment-section">
+        <ul id="comment-section-wrap">
+            <!--<li>
+                <div class="comment-section-box">
+                    <div class="comment-section-name">
+                        <input type="text" value="이름" disabled></input>
+                    </div>
+                    <div class="comment-section-text">
+                        <textarea id="comment" placeholder="글 입력"></textarea>ㅛ
+                    </div>
+                    <div class="comment-section-time">
+                        <p>시간</p>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="comment-section-box">
+                    <div class="comment-section-name">
+                        <p>이름</p>
+                    </div>
+                    <div class="comment-section-text">
+                        <p>글</p>
+                    </div>
+                    <div class="comment-section-time">
+                        <p>시간</p>
+                        <input id="delete" class="num" type="button" value="삭제">
+                    </div>
+                </div>
+            </li>-->
+        </ul>
+    </section>
+    <section class="comment-section">
+        <div id="comment-wrap">
+            <div id="comment-box">
+                <div class="comment-inform">
+                    <input type="text" id="name" placeholder="닉네임"></input>
+                </div>
+                <div class="comment-inform">
+                    <input type="text" id="pw" placeholder="비밀번호"></input>
+                </div>
+            </div>
+            <div class="comment">
+                <textarea id="comment" placeholder="글 입력"></textarea>
+            </div>
+            <div class="btn-wrap">
+                <input id="sendBtn" type="button" value="등록">
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

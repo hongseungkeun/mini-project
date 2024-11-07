@@ -1,0 +1,100 @@
+@font-face {
+    font-family: 'NanumSquareNeo';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-bRg.ttf) format("truetype");
+}
+
+body {
+    font-family: 'NanumSquareNeo', sans-serif;
+}
+
+li {
+    list-style-type: none;
+}
+
+img {
+    width:35px;
+}
+
+#wrap {
+    margin: 0px auto;
+    width: 45%;
+    padding: 20px
+}
+
+#header {
+    display: flex;
+    justify-content: center;
+    border-width: 2px 2px 0px 2px;
+    border-style: solid;
+    border-color: #D8D8D8;
+}
+
+#comment-section-wrap {
+    border-width: 2px 2px 0px 2px;
+    border-style: solid;
+    border-color: #D8D8D8;
+    margin: 0;
+    padding: 0px 25px;
+}
+
+#comment-box {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+#comment-wrap {
+    border-width: 0px 2px 2px 2px;
+    border-style: solid;
+    border-color: #D8D8D8;
+    margin: 0;
+    padding: 15px 25px;
+}
+
+#comment {
+    width: 625px;
+    height: 55px;
+}
+
+#sendBtn {
+    margin-top: 10px;
+    padding: 5px 40px
+}
+
+#name, #pw {
+    width: 100px;
+    height: 20px;
+}
+
+.comment-section-box {
+    border-bottom: 1px solid #D8D8D8;
+    padding-top: 24px;
+}
+
+.comment-section-name {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 0px 10px 10px 15px;
+}
+
+.comment-section-text {
+    font-size: 15px;
+    padding: 0px 15px;
+}
+
+.comment-section-time {
+    font-size: 12px;
+    padding: 15px 0px 15px 15px;
+    color: #979797;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-wrap {
+    text-align: center;
+}
+
+.comment-section-name > p, .comment-section-text > p, .comment-section-time > p {
+    margin: 0;
+}
